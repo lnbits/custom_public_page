@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+
+{% from "macros.jinja" import window_vars with context %} {% block scripts %} {{
+window_vars(user) }}
+
+
+<script src="{{ static_url_for('custom_public_page/static', path='js/index.js') }}"></script>
+
+
+{% endblock %} {% block page %}
+<div class="row q-col-gutter-md">
+  <div class="col-12 col-md-8 col-lg-7 q-gutter-y-md">
+    
+
+    <div class="q-mt-lg">
+      <span class="text-h5">Pages</span>
+    </div>
+    <q-card
+      id="pagesCard"
+      class="q-mt-xs"
+    >
+      <q-card-section
+        class=""
+      >
+        <div class="row items-center no-wrap q-mb-md">
+          <div class="col">
+            <q-input
+              :label="$t('search')"
+              dense
+              class="q-pr-xl"
+              v-model="pagesTable.search"
+            >
+              <template v-slot:before>
+                <q-icon name="search"> </q-icon>
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  v-if="pagesTable.search !== ''"
+                  name="close"
+                  @click="pagesTable.search = ''"
+                  class="cursor-pointer"
+                >
+                </q-icon>
+              </template>
+            </q-input>
+          </div>
+          <div class="col-auto">
+            
+            <q-btn
+              @click="showNewPagesForm()"
+              unelevated
+              split
+              color="primary"
+            >
+              New Pages
+            </q-btn>
+            
+            <q-btn
+              flat
+              color="grey"
+              icon="file_download"
+              @click="exportPagesCSV"
+              >CSV</q-btn
+            >
+          </div>
+        </div>
+        <q-table
+          dense
+          flat
+          :rows="pagesList"
+          row-key="id"
+          :columns="pagesTable.columns"
+          v-model:pagination="pagesTable.pagination"
+          :loading="pagesTable.loading"
+          @request="getPages"
+        >
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th auto-width></q-th>
+              <q-th v-for="col in props.cols" :key="col.name" :props="props">
+                ${ col.label }
+              </q-th>
+            </q-tr>
+          </template>
+
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td auto-width>
+                
+                <q-btn
+                  flat
+                  dense
+                  size="xs"
+                  icon="launch"
+                  color="primary"
+                  type="a"
+                  :href="'/custom_public_page/' + props.row.id"
+                  target="_blank"
+                  class="q-mr-sm"
+                  ><q-tooltip>Open public page</q-tooltip></q-btn
+                >
+                 
+                <q-btn
+                  flat
+                  dense
+                  size="xs"
+                  @click="showEditPagesForm(props.row)"
+                  icon="edit"
+                  color="light-blue"
+                  class="q-mr-sm"
+                >
+                  <q-tooltip> Edit </q-tooltip>
+                </q-btn>
+                
+                <q-btn
+                  flat
+                  dense
+                  size="xs"
+                  @click="deletePages(props.row.id)"
+                  icon="cancel"
+                  color="pink"
+                  class="q-mr-sm"
+                >
+                  <q-tooltip> Delete </q-tooltip>
+                </q-btn>
+              </q-td>
+
+              <q-td :props="props" key="name">
+                ${ props.row.name }
+              </q-td>
+
+              <q-td :props="props" key="updated_at">
+                <span v-text="dateFromNow(props.row.updated_at)"> </span>
+              </q-td>
+
+              <q-td :props="props" key="id" class="text-no-wrap" style="font-family: monospace;">
+                <span>${ props.row.id }</span>
+                <q-tooltip anchor="top middle" self="bottom middle">${ props.row.id }</q-tooltip>
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
+      </q-card-section>
+    </q-card>
+  </div>
+  
+  <div class="col-12 col-md-4 col-lg-5 q-gutter-y-md">
+    <q-card>
+      <q-card-section>
+        <h6 class="text-subtitle1 q-my-none">
+          {{SITE_TITLE}} CustomPublicPage
+        </h6>
+        <p>Make custom public pages</p>
+      </q-card-section>
+      <q-card-section class="q-pa-none">
+        <q-separator></q-separator>
+        <q-list>
+          {% include "custom_public_page/_api_docs.html" %}
+          <q-separator></q-separator>
+          {% include "custom_public_page/_custom_public_page.html" %}
+        </q-list>
+      </q-card-section>
+    </q-card>
+  </div>
+  
+
+  <!--/////////////////////////////////////////////////-->
+  <!--//////////////FORM DIALOG////////////////////////-->
+  <!--/////////////////////////////////////////////////-->
+
+
+  <q-dialog v-model="pagesFormDialog.show" position="top" maximized>
+    <q-card
+      v-if="pagesFormDialog.show"
+      class="q-pa-lg q-pt-md lnbits__dialog-card q-col-gutter-md"
+    >
+      <div class="row items-center q-col-gutter-md">
+        <div class="col">
+          <span class="text-h5">Pages</span>
+        </div>
+      </div>
+
+      <div class="row q-col-gutter-md items-stretch">
+        <div class="col-12 col-md-4">
+          <div class="column q-gutter-md full-height">
+            <div class="row items-center">
+              <div class="col">
+                <q-input
+                  filled
+                  v-model.trim="pagesFormDialog.data.name"
+                  label="Name"
+                  hint="Only used internally"
+                ></q-input>
+              </div>
+              <div class="col-auto q-pl-sm">
+                <q-toggle
+                  v-model="pagesFormDialog.data.center"
+                  label="Center content"
+                  color="primary"
+                  dense
+                ></q-toggle>
+              </div>
+            </div>
+
+            <q-input
+              filled
+              type="textarea"
+              v-model="pagesFormDialog.data.content"
+              label="Markdown content"
+              hint="Write your markdown here"
+              input-style="min-height: 320px"
+              class="col"
+            ></q-input>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-8 column">
+          <q-card
+            bordered
+            class="preview-pane full-height full-width column no-wrap"
+            style="min-height: 440px"
+          >
+            <q-card-section class="q-pa-md q-pb-sm">
+              <div class="text-subtitle2 text-grey-7">Preview</div>
+            </q-card-section>
+            <q-separator></q-separator>
+            <q-card-section class="q-pa-none col full-height">
+              <iframe
+                class="full-width full-height"
+                :srcdoc="pagesFormDialog.previewHtml"
+                style="border: 0; height: 100%; min-height: 380px"
+              ></iframe>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <div class="row q-mt-lg">
+        <q-btn @click="savePages" unelevated color="primary">
+          <span v-if="pagesFormDialog.data.id">Update</span>
+          <span v-else>Create</span>
+        </q-btn>
+        <q-btn v-close-popup flat color="grey" class="q-ml-auto">Cancel</q-btn>
+      </div>
+    </q-card>
+  </q-dialog>
+</div>
+{% endblock %}

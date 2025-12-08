@@ -1,0 +1,9 @@
+{
+  "repos": [
+    {
+      "id": "custom_public_page",
+      "organisation": "lnbits",
+      "repository": "custom_public_page"
+    }
+  ]
+}

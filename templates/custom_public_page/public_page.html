@@ -1,0 +1,105 @@
+{% extends "public.html" %} {% block page %}
+<div class="public-preview-wrapper" :class="{'is-centered': centerContent}">
+  <div class="public-preview-card">
+    <div v-html="contentHtml"></div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  window.app = Vue.createApp({
+    el: '#vue',
+    mixins: [windowMixin],
+    data: function () {
+      return {
+        rawContent: {{ content | tojson }},
+        contentHtml: '',
+        centerContent: {{ center | tojson | safe }}
+      }
+    },
+    methods: {
+      renderMarkdown(text) {
+        return LNbits.utils.convertMarkdown(text || '')
+      },
+    },
+    created: function () {
+      this.contentHtml = this.renderMarkdown(this.rawContent)
+    }
+  })
+</script>
+<style>
+  body {
+    margin: 0;
+    background: #121212;
+    color: #e0e0e0;
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .public-preview-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 16px 32px;
+    box-sizing: border-box;
+  }
+
+  .public-preview-card {
+    width: 100%;
+    max-width: 520px;
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 20px 24px;
+    box-sizing: border-box;
+  }
+
+  .public-preview-wrapper.is-centered .public-preview-card {
+    text-align: center;
+  }
+
+  .public-preview-card h1,
+  .public-preview-card h2,
+  .public-preview-card h3,
+  .public-preview-card h4,
+  .public-preview-card h5,
+  .public-preview-card h6 {
+    color: #fff;
+    margin-top: 0;
+    font-weight: 700;
+  }
+
+  .public-preview-card h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+  }
+
+  .public-preview-card h2 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .public-preview-card h3 {
+    font-size: 1.3rem;
+    line-height: 1.3;
+  }
+
+  .public-preview-card p {
+    margin: 0 0 12px;
+  }
+
+  .public-preview-card a {
+    color: #29b6f6;
+  }
+
+  .public-preview-card pre {
+    background: #111;
+    padding: 12px;
+    border-radius: 6px;
+    overflow: auto;
+  }
+
+  .public-preview-card code {
+    font-family: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+</style>
+{% endblock %}
