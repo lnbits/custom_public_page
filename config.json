@@ -1,5 +1,6 @@
 {
   "name": "CustomPublicPage",
+  "id": "custom_public_page",
   "short_description": "Make custom public pages",
   "tile": "/custom_public_page/static/image/custom_public_page.png",
   "version": "0.0.7",
