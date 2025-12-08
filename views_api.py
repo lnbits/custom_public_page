@@ -27,6 +27,7 @@ pages_filters = parse_filters(PagesFilters)
 
 custom_public_page_api_router = APIRouter()
 
+
 ############################# Pages #############################
 @custom_public_page_api_router.post("/api/v1/pages", status_code=HTTPStatus.CREATED)
 async def api_create_pages(
@@ -35,6 +36,7 @@ async def api_create_pages(
 ) -> Pages:
     pages = await create_pages(user.id, data)
     return pages
+
 
 @custom_public_page_api_router.put("/api/v1/pages/{pages_id}", status_code=HTTPStatus.CREATED)
 async def api_update_pages(
@@ -49,6 +51,7 @@ async def api_update_pages(
         raise HTTPException(HTTPStatus.FORBIDDEN, "You do not own this pages.")
     pages = await update_pages(Pages(**{**pages.dict(), **data.dict()}))
     return pages
+
 
 @custom_public_page_api_router.get(
     "/api/v1/pages/paginated",
@@ -68,6 +71,7 @@ async def api_get_pages_paginated(
         filters=filters,
     )
 
+
 @custom_public_page_api_router.get(
     "/api/v1/pages/{pages_id}",
     name="Get Pages",
@@ -85,6 +89,7 @@ async def api_get_pages(
         raise HTTPException(HTTPStatus.NOT_FOUND, "Pages not found.")
 
     return pages
+
 
 @custom_public_page_api_router.delete(
     "/api/v1/pages/{pages_id}",

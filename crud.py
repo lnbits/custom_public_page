@@ -9,10 +9,12 @@ from .models import (
 
 db = Database("ext_custom_public_page")
 
+
 async def create_pages(user_id: str, data: CreatePages) -> Pages:
     pages = Pages(**data.dict(), id=urlsafe_short_hash(), user_id=user_id)
     await db.insert("custom_public_page.pages", pages)
     return pages
+
 
 async def get_pages(
     user_id: str,
@@ -27,6 +29,7 @@ async def get_pages(
         Pages,
     )
 
+
 async def get_pages_by_id(
     pages_id: str,
 ) -> Pages | None:
@@ -38,6 +41,7 @@ async def get_pages_by_id(
         {"id": pages_id},
         Pages,
     )
+
 
 async def get_pages_ids_by_user(
     user_id: str,
@@ -51,6 +55,7 @@ async def get_pages_ids_by_user(
     )
 
     return [row["id"] for row in rows]
+
 
 async def get_pages_paginated(
     user_id: str | None = None,
@@ -70,9 +75,11 @@ async def get_pages_paginated(
         model=Pages,
     )
 
+
 async def update_pages(data: Pages) -> Pages:
     await db.update("custom_public_page.pages", data)
     return data
+
 
 async def delete_pages(user_id: str, pages_id: str) -> None:
     await db.execute(

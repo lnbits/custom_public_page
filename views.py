@@ -21,6 +21,7 @@ class PreviewPayload(BaseModel):
 def custom_public_page_renderer():
     return template_renderer(["custom_public_page/templates"])
 
+
 @custom_public_page_generic_router.get("/", response_class=HTMLResponse)
 async def index(req: Request, user: User = Depends(check_user_exists)):
     return custom_public_page_renderer().TemplateResponse(
@@ -29,9 +30,7 @@ async def index(req: Request, user: User = Depends(check_user_exists)):
 
 
 @custom_public_page_generic_router.post("/preview", response_class=HTMLResponse)
-async def preview_page(
-    req: Request, payload: PreviewPayload, user: User = Depends(check_user_exists)
-):
+async def preview_page(req: Request, payload: PreviewPayload, user: User = Depends(check_user_exists)):
     content = payload.content or ""
     return custom_public_page_renderer().TemplateResponse(
         "custom_public_page/public_page.html",

@@ -9,7 +9,6 @@ class CreatePages(BaseModel):
     name: str
     content: str
     center: bool = False
-    
 
 
 class Pages(BaseModel):
@@ -18,21 +17,21 @@ class Pages(BaseModel):
     name: str
     content: str
     center: bool = False
-    
+
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class PagesFilters(FilterModel):
     __search_fields__ = [
-        "name","content",
+        "name",
+        "content",
     ]
 
     __sort_fields__ = [
         "name",
         "content",
         "center",
-        
         "created_at",
         "updated_at",
     ]

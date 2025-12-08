@@ -1,28 +1,16 @@
-{% extends "base.html" %}
-
-
-{% from "macros.jinja" import window_vars with context %} {% block scripts %} {{
-window_vars(user) }}
-
+{% extends "base.html" %} {% from "macros.jinja" import window_vars with context
+%} {% block scripts %} {{ window_vars(user) }}
 
 <script src="{{ static_url_for('custom_public_page/static', path='js/index.js') }}"></script>
-
 
 {% endblock %} {% block page %}
 <div class="row q-col-gutter-md">
   <div class="col-12 col-md-8 col-lg-7 q-gutter-y-md">
-    
-
     <div class="q-mt-lg">
       <span class="text-h5">Pages</span>
     </div>
-    <q-card
-      id="pagesCard"
-      class="q-mt-xs"
-    >
-      <q-card-section
-        class=""
-      >
+    <q-card id="pagesCard" class="q-mt-xs">
+      <q-card-section class="">
         <div class="row items-center no-wrap q-mb-md">
           <div class="col">
             <q-input
@@ -46,16 +34,10 @@ window_vars(user) }}
             </q-input>
           </div>
           <div class="col-auto">
-            
-            <q-btn
-              @click="showNewPagesForm()"
-              unelevated
-              split
-              color="primary"
-            >
+            <q-btn @click="showNewPagesForm()" unelevated split color="primary">
               New Pages
             </q-btn>
-            
+
             <q-btn
               flat
               color="grey"
@@ -87,7 +69,6 @@ window_vars(user) }}
           <template v-slot:body="props">
             <q-tr :props="props">
               <q-td auto-width>
-                
                 <q-btn
                   flat
                   dense
@@ -100,7 +81,7 @@ window_vars(user) }}
                   class="q-mr-sm"
                   ><q-tooltip>Open public page</q-tooltip></q-btn
                 >
-                 
+
                 <q-btn
                   flat
                   dense
@@ -112,7 +93,7 @@ window_vars(user) }}
                 >
                   <q-tooltip> Edit </q-tooltip>
                 </q-btn>
-                
+
                 <q-btn
                   flat
                   dense
@@ -126,17 +107,22 @@ window_vars(user) }}
                 </q-btn>
               </q-td>
 
-              <q-td :props="props" key="name">
-                ${ props.row.name }
-              </q-td>
+              <q-td :props="props" key="name"> ${ props.row.name } </q-td>
 
               <q-td :props="props" key="updated_at">
                 <span v-text="dateFromNow(props.row.updated_at)"> </span>
               </q-td>
 
-              <q-td :props="props" key="id" class="text-no-wrap" style="font-family: monospace;">
+              <q-td
+                :props="props"
+                key="id"
+                class="text-no-wrap"
+                style="font-family: monospace"
+              >
                 <span>${ props.row.id }</span>
-                <q-tooltip anchor="top middle" self="bottom middle">${ props.row.id }</q-tooltip>
+                <q-tooltip anchor="top middle" self="bottom middle"
+                  >${ props.row.id }</q-tooltip
+                >
               </q-td>
             </q-tr>
           </template>
@@ -144,7 +130,7 @@ window_vars(user) }}
       </q-card-section>
     </q-card>
   </div>
-  
+
   <div class="col-12 col-md-4 col-lg-5 q-gutter-y-md">
     <q-card>
       <q-card-section>
@@ -163,12 +149,10 @@ window_vars(user) }}
       </q-card-section>
     </q-card>
   </div>
-  
 
   <!--/////////////////////////////////////////////////-->
   <!--//////////////FORM DIALOG////////////////////////-->
   <!--/////////////////////////////////////////////////-->
-
 
   <q-dialog v-model="pagesFormDialog.show" position="top" maximized>
     <q-card
