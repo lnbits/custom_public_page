@@ -25,6 +25,6 @@ async def m002_add_center(db):
     await db.execute(
         """
         ALTER TABLE custom_public_page.pages
-        ADD COLUMN center BOOLEAN NOT NULL DEFAULT 0;
+        ADD COLUMN center BOOLEAN NOT NULL DEFAULT FALSE;
     """
     )
