@@ -25,7 +25,7 @@ def custom_public_page_renderer():
 @custom_public_page_generic_router.get("/", response_class=HTMLResponse)
 async def index(req: Request, user: User = Depends(check_user_exists)):
     return custom_public_page_renderer().TemplateResponse(
-        "custom_public_page/index.html", {"request": req, "user": user.json()}
+        "custom_public_page/index.html", {"request": req, "user": user.model_dump_json()}
     )
 
 

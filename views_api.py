@@ -49,7 +49,7 @@ async def api_update_pages(
         raise HTTPException(HTTPStatus.NOT_FOUND, "Pages not found.")
     if pages.user_id != user.id:
         raise HTTPException(HTTPStatus.FORBIDDEN, "You do not own this pages.")
-    pages = await update_pages(Pages(**{**pages.dict(), **data.dict()}))
+    pages = await update_pages(Pages(**{**pages.model_dump(), **data.model_dump()}))
     return pages
 
 
