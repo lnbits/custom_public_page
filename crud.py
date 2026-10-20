@@ -11,7 +11,7 @@ db = Database("ext_custom_public_page")
 
 
 async def create_pages(user_id: str, data: CreatePages) -> Pages:
-    pages = Pages(**data.dict(), id=urlsafe_short_hash(), user_id=user_id)
+    pages = Pages(**data.model_dump(), id=urlsafe_short_hash(), user_id=user_id)
     await db.insert("custom_public_page.pages", pages)
     return pages
 
